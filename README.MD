@@ -91,3 +91,19 @@ Almaty, Kazakhstan
 - **2023**: *"Leading Uranium Analytics Firm"* - Nuclear Industry Association
 - **2022**: *"Best Market Intelligence Provider"* - Central Asia Mining Forum
 - **2021**: *"Excellence in Nuclear Sector Advisory"* - Kazakhstan Chamber of Commerce
+
+## Project Installation
+
+- clone repository
+- create database.ini
+- Fill in template for database.ini:
+```bash
+[postgresql]
+host=XXXXX
+database=XXXXX
+user=XXXXX
+password=XXXXX
+```
+- Create venv and install dependencies
+- Inside venv(On Linux): ```python3 main.py```
+- Run: ```bash superset_setup.sh install, bash superset_setup.sh start```
