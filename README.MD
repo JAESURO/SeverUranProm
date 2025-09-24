@@ -107,3 +107,5 @@ password=XXXXX
 - Create venv and install dependencies
 - Inside venv(On Linux): ```python3 main.py```
 - Run: ```bash superset_setup.sh install, bash superset_setup.sh start```
+
+![alt text](ERD.png)
