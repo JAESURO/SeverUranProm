@@ -99,107 +99,110 @@ def run_queries():
             except Exception:
                 pass
 
-        table_a = tables[0]
-        columns_a = get_columns(cur, table_a)
-        first_col_a = columns_a[0][0]
-
-        # 1) SELECT * FROM table LIMIT 10
-        print(f"\nQ1 SELECT * FROM {table_a} LIMIT 10")
-        cur.execute(f'SELECT * FROM "{table_a}" LIMIT 10')
-        print_rows_from_cursor()
-
-        # 2) WHERE filter and ORDER BY
-        text_col = pick_first_text_column(columns_a)
-        if text_col:
-            print(f"\nQ2 WHERE + ORDER BY on {table_a}")
-            cur.execute(
-                f"SELECT * FROM \"{table_a}\" WHERE \"{text_col}\" ILIKE %s ORDER BY \"{first_col_a}\" DESC LIMIT 10",
-                ('%a%',),
-            )
-        else:
-            print(f"\nQ2 WHERE + ORDER BY on {table_a}")
-            cur.execute(
-                f"SELECT * FROM \"{table_a}\" WHERE \"{first_col_a}\" IS NOT NULL ORDER BY \"{first_col_a}\" DESC LIMIT 10"
-            )
-        print_rows_from_cursor()
-
-        # 3) Aggregation with GROUP BY (count, avg, min, max)
-        numeric_col = pick_first_numeric_column(columns_a)
-        group_by_col = text_col or first_col_a
-        if numeric_col:
-            print(f"\nQ3 GROUP BY on {table_a}")
-            cur.execute(
-                f"""
-                SELECT \"{group_by_col}\" AS group_key,
-                       COUNT(*) AS cnt,
-                       AVG(\"{numeric_col}\") AS avg_val,
-                       MIN(\"{numeric_col}\") AS min_val,
-                       MAX(\"{numeric_col}\") AS max_val
-                FROM \"{table_a}\"
-                GROUP BY \"{group_by_col}\"
-                ORDER BY cnt DESC NULLS LAST
-                LIMIT 10
-                """
-            )
-        else:
-            agg_source = text_col or first_col_a
-            print(f"\nQ3 GROUP BY on {table_a}")
-            cur.execute(
-                f"""
-                SELECT \"{group_by_col}\" AS group_key,
-                       COUNT(*) AS cnt,
-                       AVG(LENGTH(COALESCE(\"{agg_source}\"::text, ''))) AS avg_len,
-                       MIN(\"{agg_source}\"::text) AS min_val,
-                       MAX(\"{agg_source}\"::text) AS max_val
-                FROM \"{table_a}\"
-                GROUP BY \"{group_by_col}\"
-                ORDER BY cnt DESC NULLS LAST
-                LIMIT 10
-                """
-            )
-        print_rows_from_cursor()
-
-        # 4) JOIN between tables (prefer actual foreign keys)
-        if len(tables) > 1:
-            fk_joins = get_foreign_key_joins(cur)
-            if fk_joins:
-                src_table, src_col, tgt_table, tgt_col = fk_joins[0]
-                print(f"\nQ4 JOIN {src_table}.{src_col} -> {tgt_table}.{tgt_col}")
-                cur.execute(
-                    f"""
-                    SELECT a.*, b.*
-                    FROM \"{src_table}\" a
-                    JOIN \"{tgt_table}\" b ON a.\"{src_col}\" = b.\"{tgt_col}\"
+        queries = [
+            {
+                'name': 'Basic SELECT from powerplants table (longtitude and latitude not included)',
+                'query': '''
+                    SELECT country_code, country_long, name_of_powerplant, capacity_mw, 
+                           primary_fuel, secondary_fuel, start_date, owner_of_plant, 
+                           generation_gwh_2021, geolocation_source, estimated_generation_gwh_2021
+                    FROM powerplants
                     LIMIT 10
-                    """
-                )
-                print_rows_from_cursor()
-            else:
-                table_b = tables[1]
-                columns_b = get_columns(cur, table_b)
-                cols_a_set = {c[0] for c in columns_a}
-                cols_b_set = {c[0] for c in columns_b}
-                common_cols = list(cols_a_set.intersection(cols_b_set))
-
-                if common_cols:
-                    join_col = common_cols[0]
-                    print(f"\nQ4 JOIN {table_a}.{join_col} = {table_b}.{join_col}")
-                    cur.execute(
-                        f"""
-                        SELECT a.*, b.*
-                        FROM \"{table_a}\" a
-                        JOIN \"{table_b}\" b ON a.\"{join_col}\" = b.\"{join_col}\"
-                        LIMIT 10
-                        """
-                    )
+                ''',
+                'params': None
+            },
+            {
+                'name': 'Filtering and sorting uranium companies by tones less than 1000',
+                'query': '''
+                    SELECT company, tonnes_u, percentage, country_long
+                    FROM uranium_companies
+                    WHERE tonnes_u > 1000
+                    ORDER BY tonnes_u DESC
+                    LIMIT 10
+                ''',
+                'params': None
+            },
+            {
+                'name': 'Aggregation by tonnes of uranium produced',
+                'query': '''
+                    SELECT 
+                        CASE 
+                            WHEN tonnes_u < 5000 THEN 'Small Producer (< 5k tonnes)'
+                            WHEN tonnes_u < 15000 THEN 'Medium Producer (5k-15k tonnes)'
+                            ELSE 'Large Producer (> 15k tonnes)'
+                        END as production_category,
+                        COUNT(*) as company_count,
+                        AVG(tonnes_u) as avg_tonnes,
+                        MIN(tonnes_u) as min_tonnes,
+                        MAX(tonnes_u) as max_tonnes
+                    FROM uranium_companies
+                    WHERE tonnes_u IS NOT NULL
+                    GROUP BY 
+                        CASE 
+                            WHEN tonnes_u < 5000 THEN 'Small Producer (< 5k tonnes)'
+                            WHEN tonnes_u < 15000 THEN 'Medium Producer (5k-15k tonnes)'
+                            ELSE 'Large Producer (> 15k tonnes)'
+                        END
+                    ORDER BY avg_tonnes DESC
+                    LIMIT 10
+                ''',
+                'params': None
+            },
+            {
+                'name': 'JOIN between uranium companies and powerplants',
+                'query': '''
+                    SELECT 
+                        c.company,
+                        c.tonnes_u,
+                        c.country_long,
+                        COUNT(p.name_of_powerplant) as powerplant_count,
+                        SUM(p.capacity_mw) as total_capacity_mw
+                    FROM uranium_companies c
+                    JOIN powerplants p ON c.country_long = p.country_long
+                    WHERE c.tonnes_u IS NOT NULL
+                    GROUP BY c.company, c.tonnes_u, c.country_long
+                    ORDER BY c.tonnes_u DESC
+                    LIMIT 10
+                ''',
+                'params': None
+            }
+        ]
+        
+        for i, query_info in enumerate(queries, 1):
+            print(f"\n{'='*60}")
+            print(f"Query {i}: {query_info['name']}")
+            print('='*60)
+            
+            try:
+                if query_info['params']:
+                    cur.execute(query_info['query'], query_info['params'])
                 else:
-                    print(f"\nQ4 CROSS JOIN {table_a} x {table_b}")
-                    cur.execute(
-                        f"SELECT a.*, b.* FROM \"{table_a}\" a CROSS JOIN \"{table_b}\" b LIMIT 10"
-                    )
-                print_rows_from_cursor()
-        else:
-            pass
+                    cur.execute(query_info['query'])
+                
+                cols = [d[0] for d in cur.description]
+                rows = cur.fetchall()
+                
+                if rows:
+                    print(f"{'№':<3} | " + " | ".join(f"{col:<15}" for col in cols))
+                    print("-" * (7 + len(cols) * 18))
+                    
+                    for idx, row in enumerate(rows, 1):
+                        formatted_row = []
+                        for val in row:
+                            if val is None:
+                                formatted_row.append("NULL")
+                            elif isinstance(val, (int, float)):
+                                formatted_row.append(str(val))
+                            else:
+                                str_val = str(val)
+                                formatted_row.append(str_val[:15] + "..." if len(str_val) > 15 else str_val)
+                        
+                        print(f"{idx:<3} | " + " | ".join(f"{val:<15}" for val in formatted_row))
+                else:
+                    print("No results found")
+                    
+            except Exception as e:
+                print(f"Error executing query: {e}")
 
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
