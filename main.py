@@ -98,111 +98,75 @@ def run_queries():
                 print_rows_from_cursor()
             except Exception:
                 pass
-
+        
         queries = [
             {
-                'name': 'Basic SELECT from powerplants table (longtitude and latitude not included)',
-                'query': '''
-                    SELECT country_code, country_long, name_of_powerplant, capacity_mw, 
-                           primary_fuel, secondary_fuel, start_date, owner_of_plant, 
-                           generation_gwh_2021, geolocation_source, estimated_generation_gwh_2021
-                    FROM powerplants
-                    LIMIT 10
-                ''',
+                'name': '1. Nuclear Power Plants',
+                'query': 'SELECT * FROM powerplants LIMIT 10',
                 'params': None
             },
             {
-                'name': 'Filtering and sorting uranium companies by tones less than 1000',
-                'query': '''
-                    SELECT company, tonnes_u, percentage, country_long
-                    FROM uranium_companies
-                    WHERE tonnes_u > 1000
-                    ORDER BY tonnes_u DESC
-                    LIMIT 10
-                ''',
+                'name': '2. Uranium Companies',
+                'query': 'SELECT * FROM uranium_companies LIMIT 10',
                 'params': None
             },
             {
-                'name': 'Aggregation by tonnes of uranium produced',
-                'query': '''
-                    SELECT 
-                        CASE 
-                            WHEN tonnes_u < 5000 THEN 'Small Producer (< 5k tonnes)'
-                            WHEN tonnes_u < 15000 THEN 'Medium Producer (5k-15k tonnes)'
-                            ELSE 'Large Producer (> 15k tonnes)'
-                        END as production_category,
-                        COUNT(*) as company_count,
-                        AVG(tonnes_u) as avg_tonnes,
-                        MIN(tonnes_u) as min_tonnes,
-                        MAX(tonnes_u) as max_tonnes
-                    FROM uranium_companies
-                    WHERE tonnes_u IS NOT NULL
-                    GROUP BY 
-                        CASE 
-                            WHEN tonnes_u < 5000 THEN 'Small Producer (< 5k tonnes)'
-                            WHEN tonnes_u < 15000 THEN 'Medium Producer (5k-15k tonnes)'
-                            ELSE 'Large Producer (> 15k tonnes)'
-                        END
-                    ORDER BY avg_tonnes DESC
-                    LIMIT 10
-                ''',
+                'name': '3. Uranium Mines',
+                'query': 'SELECT * FROM uranium_mines LIMIT 10',
                 'params': None
             },
             {
-                'name': 'JOIN between uranium companies and powerplants',
-                'query': '''
-                    SELECT 
-                        c.company,
-                        c.tonnes_u,
-                        c.country_long,
-                        COUNT(p.name_of_powerplant) as powerplant_count,
-                        SUM(p.capacity_mw) as total_capacity_mw
-                    FROM uranium_companies c
-                    JOIN powerplants p ON c.country_long = p.country_long
-                    WHERE c.tonnes_u IS NOT NULL
-                    GROUP BY c.company, c.tonnes_u, c.country_long
-                    ORDER BY c.tonnes_u DESC
-                    LIMIT 10
-                ''',
+                'name': '4. High-Capacity Nuclear Plants (by MW)',
+                'query': 'SELECT name_of_powerplant, capacity_mw FROM powerplants WHERE capacity_mw > 2000 ORDER BY capacity_mw DESC LIMIT 10',
+                'params': None
+            },
+            {
+                'name': '5. Top Uranium Producers (by tonnes)',
+                'query': 'SELECT company, tonnes_u FROM uranium_companies WHERE tonnes_u > 5000 ORDER BY tonnes_u DESC LIMIT 10',
+                'params': None
+            },
+            {
+                'name': '6. "Nuclear" Power Plants by Country',
+                'query': 'SELECT name_of_powerplant, capacity_mw FROM powerplants WHERE primary_fuel = \'Nuclear\' ORDER BY capacity_mw DESC LIMIT 10',
+                'params': None
+            },
+            {
+                'name': '7. Nuclear Plants Count by Country',
+                'query': 'SELECT country_long, COUNT(*) FROM powerplants GROUP BY country_long LIMIT 10',
+                'params': None
+            },
+            {
+                'name': '8. Uranium Production by Country',
+                'query': 'SELECT country_long, SUM(tonnes_u) FROM uranium_companies GROUP BY country_long ORDER BY SUM(tonnes_u) DESC LIMIT 10',
+                'params': None
+            },
+            {
+                'name': '9. Uranium Mines with Companies',
+                'query': 'SELECT m.mine_name, m.country_long, c.company FROM uranium_mines m JOIN uranium_companies c ON m.country_long = c.country_long LIMIT 10',
+                'params': None
+            },
+            {
+                'name': '10. Uranium Mines and Reserves by Country',
+                'query': 'SELECT m.country_long, COUNT(*) as mine_count, r.tonnes_uranium FROM uranium_mines m JOIN uranium_reserves r ON m.country_long = r.country_long GROUP BY m.country_long, r.tonnes_uranium ORDER BY r.tonnes_uranium DESC LIMIT 10',
                 'params': None
             }
         ]
         
         for i, query_info in enumerate(queries, 1):
-            print(f"\n{'='*60}")
-            print(f"Query {i}: {query_info['name']}")
-            print('='*60)
+            print(f"{query_info['name']}")
             
             try:
-                if query_info['params']:
-                    cur.execute(query_info['query'], query_info['params'])
-                else:
-                    cur.execute(query_info['query'])
-                
-                cols = [d[0] for d in cur.description]
+                cur.execute(query_info['query'])
                 rows = cur.fetchall()
                 
                 if rows:
-                    print(f"{'№':<3} | " + " | ".join(f"{col:<15}" for col in cols))
-                    print("-" * (7 + len(cols) * 18))
-                    
                     for idx, row in enumerate(rows, 1):
-                        formatted_row = []
-                        for val in row:
-                            if val is None:
-                                formatted_row.append("NULL")
-                            elif isinstance(val, (int, float)):
-                                formatted_row.append(str(val))
-                            else:
-                                str_val = str(val)
-                                formatted_row.append(str_val[:15] + "..." if len(str_val) > 15 else str_val)
-                        
-                        print(f"{idx:<3} | " + " | ".join(f"{val:<15}" for val in formatted_row))
+                        print(f"{idx}. {row}")
                 else:
                     print("No results found")
                     
             except Exception as e:
-                print(f"Error executing query: {e}")
+                print(f"Error: {e}")
 
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
