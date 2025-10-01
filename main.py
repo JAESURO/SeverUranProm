@@ -111,7 +111,6 @@ def export_to_excel(dataframes_dict, filename):
 
 
 def create_charts(df, chart_name, chart_type, business_question):
-    """Create various types of charts"""
     plt.style.use('default')
     plt.rcParams['figure.figsize'] = (12, 8)
     plt.rcParams['font.size'] = 10
@@ -196,12 +195,27 @@ def create_charts(df, chart_name, chart_type, business_question):
         
     elif chart_type == 'scatter':
         if len(df.columns) >= 2:
-            x_data = df.iloc[:, 0] if df.iloc[:, 0].dtype in ['int64', 'float64'] else range(len(df))
-            y_data = df.iloc[:, 1] if df.iloc[:, 1].dtype in ['int64', 'float64'] else range(len(df))
-            plt.scatter(x_data, y_data, alpha=0.6)
-            plt.title(f'Scatter Plot: {business_question}')
-            plt.xlabel(df.columns[0])
-            plt.ylabel(df.columns[1])
+            text_cols = [c for c in df.columns if df[c].dtype not in ['int64', 'float64']]
+            num_cols = [c for c in df.columns if df[c].dtype in ['int64', 'float64']]
+            
+            x_col = text_cols[0] if len(text_cols) > 0 else df.columns[0]
+            y_col = num_cols[0] if len(num_cols) > 0 else df.columns[1]
+            
+            df_plot = df[[x_col, y_col]].copy()
+            if df_plot[y_col].dtype == 'object':
+                df_plot[y_col] = pd.to_numeric(df_plot[y_col], errors='coerce')
+            df_plot = df_plot.dropna()
+            
+            if len(df_plot) > 0:
+                x_data = df_plot[x_col].astype(str).tolist()
+                y_data = df_plot[y_col].tolist()
+                plt.scatter(x_data, y_data, alpha=0.6)
+                plt.title(f'Scatter Plot: {business_question}')
+                plt.xlabel(x_col)
+                plt.ylabel(y_col)
+                plt.xticks(rotation=45)
+            else:
+                print("Insufficient data for scatter plot")
     
     plt.tight_layout()
     plt.savefig(chart_path, dpi=300, bbox_inches='tight')
@@ -216,7 +230,6 @@ def create_charts(df, chart_name, chart_type, business_question):
 
 
 def create_interactive_chart(df, chart_name, business_question):
-    """Create interactive chart with time slider using historical data"""
     df_work = df.copy()
     
     year_columns = [col for col in df_work.columns if col.startswith('Production_')]
@@ -317,7 +330,7 @@ def run_queries():
                 'query': '''
                     SELECT country_long as "Country", SUM(tonnes_u) as "Uranium_Production_Tonnes"
                     FROM uranium_companies 
-                    WHERE country_long IS NOT NULL AND country_long <> 'Demo Country'
+                    WHERE country_long IS NOT NULL
                     GROUP BY country_long 
                     ORDER BY SUM(tonnes_u) DESC 
                     LIMIT 10
@@ -330,27 +343,26 @@ def run_queries():
                 'query': '''
                     SELECT 
                         country_long as "Country", 
-                        AVG(NULLIF(capacity_mw::numeric, 0)) as "Avg_Capacity_MW"
+                        AVG(NULLIF(capacity_mw::numeric, 0)) as "Average Capacity of NPPs by MegaWatts"
                     FROM powerplants 
                     WHERE capacity_mw IS NOT NULL
                       AND NULLIF(TRIM(primary_fuel), '') IS NOT NULL
                       AND TRIM(primary_fuel) ILIKE '%nuclear%'
                     GROUP BY country_long 
-                    ORDER BY "Avg_Capacity_MW" DESC NULLS LAST
+                    ORDER BY "Average Capacity of NPPs by MegaWatts" DESC NULLS LAST
                     LIMIT 10
                 ''',
                 'chart_type': 'barh',
                 'business_question': 'Average capacity of nuclear plants by country'
             },
             {
-                'name': '4. Reserves vs production',
+                'name': '4. Reserves and Production',
                 'query': '''
                     SELECT r.country_long as "Country", 
-                           r.tonnes_uranium as "Uranium_Reserves_Tonnes",
-                           COALESCE(SUM(c.tonnes_u), 0) as "Uranium_Production_Tonnes"
+                           r.tonnes_uranium as "Reserves_Tonnes",
+                           COALESCE(c.tonnes_u, 0) as "Production_Tonnes"
                     FROM uranium_reserves r
                     LEFT JOIN uranium_companies c ON r.country_long = c.country_long
-                    GROUP BY r.country_long, r.tonnes_uranium
                     ORDER BY r.tonnes_uranium DESC
                     LIMIT 15
                 ''',
@@ -360,7 +372,7 @@ def run_queries():
             {
                 'name': '5. Distribution of Nuclear Plant Capacities',
                 'query': '''
-                    SELECT capacity_mw as "Capacity_MW"
+                    SELECT capacity_mw as "Capacity in MegaWatts"
                     FROM powerplants 
                     WHERE primary_fuel = 'Nuclear' AND capacity_mw IS NOT NULL AND capacity_mw > 0
                     ORDER BY capacity_mw
@@ -369,7 +381,7 @@ def run_queries():
                 'business_question': 'Distribution of Nuclear Plant Capacities'
             },
             {
-                'name': '6. Uranium production by top companies',
+                'name': '6. Uranium production top companies',
                 'query': '''
                     SELECT 
                         c.company as "Company", 
