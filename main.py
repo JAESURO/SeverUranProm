@@ -245,6 +245,9 @@ def create_interactive_chart(df, chart_name, business_question):
         df_long = df_long.dropna(subset=['Production'])
         
         if len(df_long) > 0:
+            df_long['Production'] = pd.to_numeric(df_long['Production'], errors='coerce')
+            df_long = df_long.dropna(subset=['Production'])
+            
             fig = px.scatter(df_long, 
                            x='Country', 
                            y='Production',
@@ -297,20 +300,6 @@ def run_queries():
             print('No user tables found in schema public. Exiting.')
             return
 
-        def print_rows_from_cursor():
-            cols = [d[0] for d in cur.description]
-            print('\t'.join(cols))
-            for r in cur.fetchall():
-                print('\t'.join('' if v is None else str(v) for v in r))
-
-        for sample_table in tables[:3]:
-            try:
-                print(f"\nSAMPLE {sample_table}")
-                cur.execute(f'SELECT * FROM "{sample_table}" LIMIT 5')
-                print_rows_from_cursor()
-            except Exception:
-                pass
-        
         visualization_queries = [
             {
                 'name': '1. Nuclear power plants by country',
@@ -328,11 +317,11 @@ def run_queries():
             {
                 'name': '2. Top-10 countries by uranium production',
                 'query': '''
-                    SELECT country_long as "Country", SUM(tonnes_u) as "Uranium_Production_Tonnes"
-                    FROM uranium_companies 
+                    SELECT country_long as "Country", SUM(production_tonnes_uranium) as "Uranium_Production_Tonnes"
+                    FROM mines 
                     WHERE country_long IS NOT NULL
                     GROUP BY country_long 
-                    ORDER BY SUM(tonnes_u) DESC 
+                    ORDER BY SUM(production_tonnes_uranium) DESC 
                     LIMIT 10
                 ''',
                 'chart_type': 'bar',
@@ -343,9 +332,9 @@ def run_queries():
                 'query': '''
                     SELECT 
                         country_long as "Country", 
-                        AVG(NULLIF(capacity_mw::numeric, 0)) as "Average Capacity of NPPs by MegaWatts"
+                        AVG(NULLIF(capacity_in_mw::numeric, 0)) as "Average Capacity of NPPs by MegaWatts"
                     FROM powerplants 
-                    WHERE capacity_mw IS NOT NULL
+                    WHERE capacity_in_mw IS NOT NULL
                       AND NULLIF(TRIM(primary_fuel), '') IS NOT NULL
                       AND TRIM(primary_fuel) ILIKE '%nuclear%'
                     GROUP BY country_long 
@@ -359,11 +348,11 @@ def run_queries():
                 'name': '4. Reserves and Production',
                 'query': '''
                     SELECT r.country_long as "Country", 
-                           r.tonnes_uranium as "Reserves_Tonnes",
-                           COALESCE(c.tonnes_u, 0) as "Production_Tonnes"
-                    FROM uranium_reserves r
-                    LEFT JOIN uranium_companies c ON r.country_long = c.country_long
-                    ORDER BY r.tonnes_uranium DESC
+                           r.tonnes_of_uranium as "Reserves_Tonnes",
+                           COALESCE(m.production_tonnes_uranium, 0) as "Production_Tonnes"
+                    FROM reserves r
+                    LEFT JOIN mines m ON r.country_long = m.country_long
+                    ORDER BY r.tonnes_of_uranium DESC
                     LIMIT 15
                 ''',
                 'chart_type': 'scatter',
@@ -372,10 +361,10 @@ def run_queries():
             {
                 'name': '5. Distribution of Nuclear Plant Capacities',
                 'query': '''
-                    SELECT capacity_mw as "Capacity in MegaWatts"
+                    SELECT capacity_in_mw as "Capacity in MegaWatts"
                     FROM powerplants 
-                    WHERE primary_fuel = 'Nuclear' AND capacity_mw IS NOT NULL AND capacity_mw > 0
-                    ORDER BY capacity_mw
+                    WHERE primary_fuel = 'Nuclear' AND capacity_in_mw IS NOT NULL AND capacity_in_mw > 0
+                    ORDER BY capacity_in_mw
                 ''',
                 'chart_type': 'hist',
                 'business_question': 'Distribution of Nuclear Plant Capacities'
@@ -385,10 +374,10 @@ def run_queries():
                 'query': '''
                     SELECT 
                         c.company as "Company", 
-                        c.tonnes_u as "Production_Tonnes"
-                    FROM uranium_companies c
-                    WHERE c.tonnes_u > 1000
-                    ORDER BY c.tonnes_u DESC
+                        c.tonnes_uranium as "Production_Tonnes"
+                    FROM companies c
+                    WHERE c.tonnes_uranium > 1000
+                    ORDER BY c.tonnes_uranium DESC
                     LIMIT 20
                 ''',
                 'chart_type': 'line',
@@ -402,17 +391,17 @@ def run_queries():
                 'query': '''
                     SELECT 
                         country_long as "Country",
-                        year_2007 as "Production_2007",
-                        year_2008 as "Production_2008", 
-                        year_2009 as "Production_2009",
-                        year_2010 as "Production_2010",
-                        year_2011 as "Production_2011",
-                        year_2012 as "Production_2012",
-                        year_2013 as "Production_2013",
-                        year_2014 as "Production_2014"
-                    FROM uranium_production_historical
+                        "2007" as "Production_2007",
+                        "2008" as "Production_2008", 
+                        "2009" as "Production_2009",
+                        "2010" as "Production_2010",
+                        "2011" as "Production_2011",
+                        "2012" as "Production_2012",
+                        "2013" as "Production_2013",
+                        "2014" as "Production_2014"
+                    FROM production
                     WHERE country_long IS NOT NULL
-                    ORDER BY year_2014 DESC NULLS LAST
+                    ORDER BY "2014" DESC NULLS LAST
                     LIMIT 15
                 ''',
                 'business_question': 'Uranium Production Trends by Country'
@@ -425,30 +414,29 @@ def run_queries():
                 'query': '''
                     SELECT p.name_of_powerplant as "Powerplant",
                            p.country_long as "Country",
-                           p.capacity_mw as "Capacity_MW",
+                           p.capacity_in_mw as "Capacity_MW",
                            p.primary_fuel as "Primary_Fuel"
                     FROM powerplants p
                     WHERE p.primary_fuel = 'Nuclear'
-                    ORDER BY p.capacity_mw DESC
+                    ORDER BY p.capacity_in_mw DESC
                 '''
             },
             {
                 'name': 'Uranium companies',
                 'query': '''
                     SELECT c.company as "Company",
-                           c.country_long as "Country",
-                           c.tonnes_u as "Production_Tonnes"
-                    FROM uranium_companies c
-                    ORDER BY c.tonnes_u DESC
+                           c.tonnes_uranium as "Production_Tonnes"
+                    FROM companies c
+                    ORDER BY c.tonnes_uranium DESC
                 '''
             },
             {
                 'name': 'Uranium reserves',
                 'query': '''
                     SELECT r.country_long as "Country",
-                           r.tonnes_uranium as "Reserves_Tonnes"
-                    FROM uranium_reserves r
-                    ORDER BY r.tonnes_uranium DESC
+                           r.tonnes_of_uranium as "Reserves_Tonnes"
+                    FROM reserves r
+                    ORDER BY r.tonnes_of_uranium DESC
                 '''
             }
         ]

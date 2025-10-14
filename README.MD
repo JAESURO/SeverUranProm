@@ -96,18 +96,58 @@ Almaty, Kazakhstan
 
 ![Database ERD](ERD.png)
 
-## Project Installation
+## 🐳 Docker Installation
 
-- clone repository
-- create database.ini
-- Fill in template for database.ini:
+### Quick Start:
+```bash
+git clone <repository-url>
+cd SeverUranProm
+
+sudo docker compose up -d
+
+open http://localhost:8088
+```
+
+### Access Information:
+- **Superset**: http://localhost:8088
+- **PostgreSQL**: XXXXX:XXXXX
+- **Database**: XXXXX
+- **Credentials**: XXXXX/XXXXX
+
+### Manual Setup:
 ```bash
 [postgresql]
 host=XXXXX
 database=XXXXX
 user=XXXXX
 password=XXXXX
+
+python3 -m venv venv
+source venv/bin/activate
+
+python3 main.py
 ```
-- Create venv and install dependencies
-- Inside venv(On Linux): ```python3 main.py```
-- Run: ```bash superset_setup.sh install, bash superset_setup.sh start```
+
+## 🔧 Configuration
+
+### Environment Variables (.env):
+```bash
+DB_USER=XXXXX
+DB_PASSWORD=XXXXX
+DB_NAME=XXXXX
+ADMIN_USERNAME=XXXXX
+ADMIN_PASSWORD=XXXXX
+SUPERSET_SECRET_KEY=XXXXX
+```
+
+### Docker Commands:
+```bash
+sudo docker compose up -d
+
+sudo docker compose down
+
+sudo docker logs superset_app
+sudo docker logs superset_postgres
+
+sudo docker compose restart superset
+```
