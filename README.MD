@@ -96,25 +96,7 @@ Almaty, Kazakhstan
 
 ![Database ERD](ERD.png)
 
-## 🐳 Docker Installation
-
-### Quick Start:
-```bash
-git clone <repository-url>
-cd SeverUranProm
-
-sudo docker compose up -d
-
-open http://localhost:8088
-```
-
-### Access Information:
-- **Superset**: http://localhost:8088
-- **PostgreSQL**: XXXXX:XXXXX
-- **Database**: XXXXX
-- **Credentials**: XXXXX/XXXXX
-
-### Manual Setup:
+### Manual Setup (database.ini):
 ```bash
 [postgresql]
 host=XXXXX
@@ -141,13 +123,11 @@ SUPERSET_SECRET_KEY=XXXXX
 ```
 
 ### Docker Commands:
-```bash
-sudo docker compose up -d
+https://superset.apache.org/docs/quickstart/
 
-sudo docker compose down
 
-sudo docker logs superset_app
-sudo docker logs superset_postgres
-
-sudo docker compose restart superset
-```
+### Access Information:
+- **Superset**: http://localhost:8088
+- **PostgreSQL**: XXXXX:XXXXX
+- **Database**: XXXXX
+- **Credentials**: XXXXX/XXXXX
