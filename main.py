@@ -304,7 +304,7 @@ def run_queries():
             {
                 'name': '1. Nuclear power plants by country',
                 'query': '''
-                    SELECT country_long as "Country", COUNT(*) as "NPP_Count"
+                    SELECT country_long as "Country", COUNT(*) as "NPP Count"
                     FROM powerplants 
                     WHERE primary_fuel = 'Nuclear'
                     GROUP BY country_long 

@@ -1,0 +1,502 @@
+dashboard_title: Uranium Market Overview
+description: null
+css: ''
+slug: null
+certified_by: ''
+certification_details: ''
+published: false
+uuid: 2b91f76a-6e86-470e-b5e5-b8ddcc7b9e13
+position:
+  DASHBOARD_VERSION_KEY: v2
+  GRID_ID:
+    children:
+    - ROW-N-C9W3Z4QM
+    id: GRID_ID
+    parents:
+    - ROOT_ID
+    type: GRID
+  HEADER_ID:
+    id: HEADER_ID
+    meta:
+      text: Uranium Market Overview
+    type: HEADER
+  ROOT_ID:
+    children:
+    - GRID_ID
+    id: ROOT_ID
+    type: ROOT
+  ROW-N-C9W3Z4QM:
+    children:
+    - CHART-H30ZY0MC
+    - CHART-WWFJKZJJ
+    - CHART-5FEA96YM
+    - CHART-Z8YNAF1B
+    - CHART-4KLOQV8I
+    - CHART-9O2YCMVZ
+    - CHART-ODQJETCA
+    - CHART-HU0IU0NZ
+    - CHART-TNV8XUXC
+    - CHART-JWXQ6P1F
+    - CHART-KI2HNF1X
+    - CHART-Z1YG7JZ5
+    - CHART-NAXVIV6B
+    - CHART-7G2S4MLR
+    - CHART-CZXI4JOD
+    - CHART-H7MX4WRE
+    - CHART-K539JAS2
+    - CHART-XJA5UPHI
+    id: ROW-N-C9W3Z4QM
+    meta:
+      '0': ROOT_ID
+      background: BACKGROUND_TRANSPARENT
+    type: ROW
+    parents:
+    - ROOT_ID
+    - GRID_ID
+  CHART-H30ZY0MC:
+    children: []
+    id: CHART-H30ZY0MC
+    meta:
+      chartId: 248
+      height: 50
+      sliceName: Power Plants Capacity
+      uuid: ec341706-34df-48d3-9493-331add6d87af
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-WWFJKZJJ:
+    children: []
+    id: CHART-WWFJKZJJ
+    meta:
+      chartId: 247
+      height: 50
+      sliceName: Power Plants Sunburst
+      uuid: f6462cb9-d92f-48fc-b57e-7e8346c9aef2
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-5FEA96YM:
+    children: []
+    id: CHART-5FEA96YM
+    meta:
+      chartId: 250
+      height: 50
+      sliceName: Uranium Price Inflation Static
+      uuid: 73b1469b-ebb2-42e3-8d79-e9f669a5aa9c
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-Z8YNAF1B:
+    children: []
+    id: CHART-Z8YNAF1B
+    meta:
+      chartId: 205
+      height: 50
+      sliceName: Distribution of Nuclear Plant Capacities
+      uuid: ad6a447f-ade0-40af-8edd-e4466025a94f
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-4KLOQV8I:
+    children: []
+    id: CHART-4KLOQV8I
+    meta:
+      chartId: 207
+      height: 50
+      sliceName: Nuclear powerplants distribution
+      uuid: 680f212c-49dd-45df-86fb-83af65cbdc71
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-9O2YCMVZ:
+    children: []
+    id: CHART-9O2YCMVZ
+    meta:
+      chartId: 164
+      height: 50
+      sliceName: Top-10 countries by uranium production
+      uuid: ba8fbf4a-1ac9-49a1-91d4-2a47a18efb82
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-ODQJETCA:
+    children: []
+    id: CHART-ODQJETCA
+    meta:
+      chartId: 251
+      height: 50
+      sliceName: Normalized Uranium Reserves
+      uuid: 1db0d3e0-4cd0-4b2c-9f06-7d304a6d00ab
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-HU0IU0NZ:
+    children: []
+    id: CHART-HU0IU0NZ
+    meta:
+      chartId: 253
+      height: 50
+      sliceName: Inflation Growth Rate
+      uuid: 9cb59661-2fbd-4719-812b-84b857478987
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-TNV8XUXC:
+    children: []
+    id: CHART-TNV8XUXC
+    meta:
+      chartId: 249
+      height: 50
+      sliceName: Power Plant Fuel Types
+      uuid: 97518208-0581-4e80-bc19-f411bca646ac
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-JWXQ6P1F:
+    children: []
+    id: CHART-JWXQ6P1F
+    meta:
+      chartId: 165
+      height: 50
+      sliceName: Average capacity of nuclear plants by country
+      uuid: 9e71e85f-0724-40d1-9796-8a115a9b5cfe
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-KI2HNF1X:
+    children: []
+    id: CHART-KI2HNF1X
+    meta:
+      chartId: 254
+      height: 50
+      sliceName: Number of Reserves Category
+      uuid: 6e87a1b6-20fc-4bdb-8c96-e6a2e31d9222
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-Z1YG7JZ5:
+    children: []
+    id: CHART-Z1YG7JZ5
+    meta:
+      chartId: 206
+      height: 50
+      sliceName: Uranium production top companies
+      uuid: cfc759ec-f5d0-48e5-afde-2ea8356b2117
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-NAXVIV6B:
+    children: []
+    id: CHART-NAXVIV6B
+    meta:
+      chartId: 246
+      height: 50
+      sliceName: Power Plants by Country and Fuel Type
+      uuid: b210dcb8-8028-4eeb-aa3c-cc570c7a1f7c
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-7G2S4MLR:
+    children: []
+    id: CHART-7G2S4MLR
+    meta:
+      chartId: 252
+      height: 50
+      sliceName: Average and Median of Fuel Types Power Capacity
+      uuid: 8913ef7e-5993-4817-b569-4e8878d3d313
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-CZXI4JOD:
+    children: []
+    id: CHART-CZXI4JOD
+    meta:
+      chartId: 166
+      height: 50
+      sliceName: Relationship between reserves and production by country
+      uuid: 48a01b1a-d23d-4f2e-8beb-b3c046648ff6
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-H7MX4WRE:
+    children: []
+    id: CHART-H7MX4WRE
+    meta:
+      chartId: 162
+      height: 50
+      sliceName: Top 10 Countries by number of powerplants
+      uuid: 138220d6-c865-40de-8466-f22fe0b2151d
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-K539JAS2:
+    children: []
+    id: CHART-K539JAS2
+    meta:
+      chartId: 163
+      height: 50
+      sliceName: Distribution of "nuclear" powerplants by country
+      uuid: cc3d6e64-2c92-4242-909b-c16a9c6bb35c
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+  CHART-XJA5UPHI:
+    children: []
+    id: CHART-XJA5UPHI
+    meta:
+      chartId: 122
+      height: 50
+      sliceName: Uranium Price Inflation
+      uuid: 0f1f9801-86cc-4ea9-bdc1-1c05641b0424
+      width: 4
+    type: CHART
+    parents:
+    - ROOT_ID
+    - GRID_ID
+    - ROW-N-C9W3Z4QM
+metadata:
+  chart_configuration: {}
+  global_chart_configuration:
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded: []
+    chartsInScope: []
+  map_label_colors: {}
+  color_scheme: ''
+  refresh_frequency: 0
+  color_scheme_domain: []
+  expanded_slices: {}
+  label_colors: {}
+  shared_label_colors:
+  - ''
+  - Argentina
+  - Australia
+  - Austria
+  - Biomass
+  - Brazil
+  - Canada
+  - China
+  - Coal
+  - France
+  - Gas
+  - Geothermal
+  - Germany
+  - Hydro
+  - India
+  - Indonesia
+  - Inflation-Adjusted Price
+  - Iran
+  - Italy
+  - Japan
+  - Mexico
+  - Netherlands
+  - Nominal Price
+  - Norway
+  - Nuclear
+  - Oil
+  - Poland
+  - Russia
+  - Saudi Arabia
+  - Solar
+  - South Africa
+  - South Korea
+  - Spain
+  - Storage
+  - Sweden
+  - Switzerland
+  - Thailand
+  - Turkey
+  - United Kingdom
+  - United States of America
+  - Vietnam
+  - Waste
+  - Wind
+  timed_refresh_immune_slices: []
+  cross_filters_enabled: true
+  default_filters: '{}'
+  native_filter_configuration:
+  - id: NATIVE_FILTER-RqSZrBIAmBDTxBxynTzC9
+    controlValues:
+      enableEmptyFilter: false
+      defaultToFirstItem: false
+      multiSelect: true
+      searchAllOptions: false
+      inverseSelection: false
+    name: Country Filter
+    filterType: filter_select
+    targets:
+    - column:
+        name: country_long
+      datasetUuid: 5f5acd2b-150f-432a-af3c-65df13a8f8da
+    defaultDataMask:
+      extraFormData: {}
+      filterState: {}
+      ownState: {}
+    cascadeParentIds: []
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded:
+      - 122
+      - 164
+      - 166
+      - 206
+      - 250
+    type: NATIVE_FILTER
+    description: ''
+  - id: NATIVE_FILTER-iBItqCT71PCgkpNtYuojp
+    controlValues:
+      enableEmptyFilter: false
+      defaultToFirstItem: false
+      multiSelect: true
+      searchAllOptions: false
+      inverseSelection: false
+    name: Year Filter
+    filterType: filter_select
+    targets:
+    - column:
+        name: year_
+      datasetUuid: b9540b8e-4901-4c78-82fb-de47b032454e
+    defaultDataMask:
+      extraFormData: {}
+      filterState: {}
+      ownState: {}
+    cascadeParentIds: []
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded:
+      - 162
+      - 163
+      - 164
+      - 165
+      - 166
+      - 205
+      - 206
+      - 207
+      - 246
+      - 247
+      - 248
+      - 249
+      - 250
+    type: NATIVE_FILTER
+    description: ''
+  - id: NATIVE_FILTER-ksUDx-oM5CAy6rndHNSdJ
+    controlValues:
+      enableEmptyFilter: false
+      defaultToFirstItem: false
+      multiSelect: true
+      searchAllOptions: false
+      inverseSelection: false
+    name: Fuel Type Filter
+    filterType: filter_select
+    targets:
+    - column:
+        name: primary_fuel
+      datasetUuid: 5f5acd2b-150f-432a-af3c-65df13a8f8da
+    defaultDataMask:
+      extraFormData: {}
+      filterState: {}
+      ownState: {}
+    cascadeParentIds: []
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded:
+      - 122
+      - 164
+      - 166
+      - 206
+      - 250
+    type: NATIVE_FILTER
+    description: ''
+  - id: NATIVE_FILTER-DPcEdkhAd4rea98tU-qq2
+    controlValues:
+      enableEmptyFilter: false
+      defaultToFirstItem: false
+      multiSelect: true
+      searchAllOptions: false
+      inverseSelection: false
+    name: Company Filter
+    filterType: filter_select
+    targets:
+    - column:
+        name: company
+      datasetUuid: 91f8d2d3-1f14-4d6b-8824-97cf56b56629
+    defaultDataMask:
+      extraFormData: {}
+      filterState: {}
+      ownState: {}
+    cascadeParentIds: []
+    scope:
+      rootPath:
+      - ROOT_ID
+      excluded:
+      - 122
+      - 162
+      - 163
+      - 164
+      - 165
+      - 166
+      - 205
+      - 207
+      - 246
+      - 247
+      - 248
+      - 249
+      - 250
+    type: NATIVE_FILTER
+    description: ''
+version: 1.0.0
