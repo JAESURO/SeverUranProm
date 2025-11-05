@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'severuranprom-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'postgresql'
+    static_configs:
+      - targets: ['postgres_exporter:9187']
+        labels:
+          instance: 'postgresql-local'
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node_exporter:9100']
+        labels:
+          instance: 'host-system'
+
+  - job_name: 'custom'
+    static_configs:
+      - targets: ['custom_exporter:8000']
+        labels:
+          instance: 'custom-api-exporter'
+    scrape_interval: 20s

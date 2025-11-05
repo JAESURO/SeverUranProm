@@ -2,9 +2,11 @@ import psycopg2
 import random
 import time
 from datetime import datetime
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config import config
 
-# Month mapping
 MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -92,7 +94,7 @@ def insert_price_record(conn):
         data = generate_price_data(year_, month_)
         
         insert_query = """
-        INSERT INTO Prices (year_, month_, price_uranium, inflation_rate, Price_uran_inflation)
+        INSERT INTO Prices (year_, month_, price_uranium, inflation_rate, price_uran_inflation)
         VALUES (%s, %s, %s, %s, %s)
         """
         
@@ -121,9 +123,9 @@ def main():
         while True:
             interval = random.uniform(10, 15)
             
-            if insert_price_record(conn):
-                record_count += 1
-                print(f"Total records: {record_count}")
+            insert_price_record(conn)
+            record_count += 1
+            print(f"Total records: {record_count}")
             
             time.sleep(interval)
             

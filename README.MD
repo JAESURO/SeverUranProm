@@ -96,35 +96,92 @@ Almaty, Kazakhstan
 
 ![Database ERD](ERD.png)
 
-### Manual Setup (database.ini):
-```bash
-[postgresql]
-host=XXXXX
-database=XXXXX
-user=XXXXX
-password=XXXXX
-
-python3 -m venv venv
-source venv/bin/activate
-
-python3 main.py
-```
-
 ## 🔧 Configuration
 
 ### Environment Variables (.env):
+Create a `.env` file in the project root with the following variables:
+
 ```bash
+DB_HOST=XXXXX
+DB_PORT=XXXXX
+DB_NAME=XXXXX
 DB_USER=XXXXX
 DB_PASSWORD=XXXXX
-DB_NAME=XXXXX
-ADMIN_USERNAME=XXXXX
-ADMIN_PASSWORD=XXXXX
-SUPERSET_SECRET_KEY=XXXXX
+
+GRAFANA_SMTP_ENABLED=true
+GRAFANA_SMTP_HOST=smtp.gmail.com:587
+GRAFANA_SMTP_USER=XXXXX
+GRAFANA_SMTP_PASSWORD=XXXXX
+GRAFANA_SMTP_FROM_ADDRESS=XXXXX
+GRAFANA_SMTP_FROM_NAME=Grafana
+GRAFANA_SMTP_STARTTLS_POLICY=Mandatory
+GRAFANA_SMTP_SKIP_VERIFY=false
+
+GRAFANA_ADMIN_USER=admin
+GRAFANA_ADMIN_PASSWORD=admin
+
+POSTGRES_HOST=XXXXX
+POSTGRES_PORT=XXXXX
+POSTGRES_DB=XXXXX
+POSTGRES_USER=XXXXX
+POSTGRES_PASSWORD=XXXXX
+
+OPENWEATHER_API_KEY=XXXXX
 ```
 
-### Docker Commands:
-https://superset.apache.org/docs/quickstart/
+### Setup:
+```bash
+python3 -m venv venv
+source venv/bin/activate
 
+pip install -r config/requirements.txt
+
+python3 scripts/main.py
+```
+
+## 📊 Monitoring Stack (Prometheus & Grafana)
+
+### Prerequisites
+- Local PostgreSQL running on configured port
+- Database exists with tables
+- Docker and Docker Compose installed
+
+### Start All Services
+```bash
+cd monitoring && docker compose up -d
+```
+
+### Stop All Services
+```bash
+cd monitoring && docker compose down
+```
+
+### Restart All Services
+```bash
+cd monitoring && docker compose restart
+```
+
+### Rebuild Custom Exporter (if code changed)
+```bash
+cd monitoring && docker compose build custom_exporter && docker compose up -d custom_exporter
+```
+
+### Check Container Status
+```bash
+docker ps
+```
+
+### Generate Database Load (Optional)
+```bash
+source /path/to/venv/bin/activate && python3 scripts/generate_load.py
+```
+
+### Access URLs
+- **Grafana**: http://localhost:3000 (XXXXX/XXXXX)
+- **Prometheus**: http://localhost:9090
+- **PostgreSQL Exporter**: http://localhost:9187/metrics
+- **Node Exporter**: http://localhost:9100/metrics
+- **Custom Exporter**: http://localhost:8000/metrics
 
 ### Access Information:
 - **Superset**: http://localhost:8088
