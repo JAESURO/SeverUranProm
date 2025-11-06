@@ -22,7 +22,7 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     env_file:
-      - ../.env
+      - ../config/.env
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
@@ -50,7 +50,7 @@ services:
     image: quay.io/prometheuscommunity/postgres-exporter:latest
     container_name: postgres_exporter
     env_file:
-      - ../.env
+      - ../config/.env
     environment:
       DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"
     extra_hosts:
@@ -84,7 +84,7 @@ services:
       dockerfile: monitoring/Dockerfile.custom_exporter
     container_name: custom_exporter
     env_file:
-      - ../.env
+      - ../config/.env
     environment:
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
     ports:
